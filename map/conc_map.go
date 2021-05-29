@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ralfbawg/go-guava/hash"
+	"git.code.oa.com/trpc-go/trpc-go/log"
 )
 
 // ShardCount 默认分区数
