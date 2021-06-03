@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"git.code.oa.com/trpc-go/trpc-go/log"
+	"go-guava/hash"
 )
 
 // ShardCount 默认分区数
@@ -55,7 +55,7 @@ func NewConcMap() ConcMap {
 
 // GetShard returns shard by given key
 func (m ConcMap) GetShard(key string) *Shared {
-	return m[uint(hash.Murmur2(key))%uint(ShardCount)]
+	return m[uint(hash.MurmurHash2(key))%uint(ShardCount)]
 }
 
 // MSet multi set key
@@ -159,7 +159,6 @@ func (m ConcMap) Remove(key string) {
 	// rebuild the shard map to reduce the gc expression and the memory taken
 	if (time.Until(shard.lastRebuild) > 5*time.Second && shard.
 		deleteCount > ShardDeleteThreshold) || shard.deleteCount > ShardDeleteThreshold*3 { // 5秒间隔或者3倍压力时
-		log.Debugf("start to rebuild map shard with deleteCount=%d", shard.deleteCount)
 		tmpA := make(map[string]interface{}, len(shard.items))
 		for k, v := range shard.items {
 			tmpA[k] = v
